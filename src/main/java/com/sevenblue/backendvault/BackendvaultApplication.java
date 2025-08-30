@@ -4,28 +4,26 @@ import java.util.Map;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.orm.jpa.JpaAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+// Removed @EnableTransactionManagement as JPA is no longer used for transactions
 
 /**
  * Trading Platform Application - High-Performance Spring Boot App
  * 
  * Features Enabled:
  * - Async processing for non-blocking operations
- * - Transaction management for data consistency
- * - Auto-configuration for rapid development
+ * - Auto-configuration for rapid development (excluding JPA)
  * - Production-ready with Actuator endpoints
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {JpaAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 @EnableAsync
-@EnableTransactionManagement
+// @EnableTransactionManagement removed
 public class BackendvaultApplication {
 
 	public static void main(String[] args) {
-		// JVM optimizations for trading workloads
-        System.setProperty("spring.jpa.properties.hibernate.jdbc.batch_size", "500");
-        System.setProperty("spring.jpa.properties.hibernate.order_inserts", "true");
-        System.setProperty("spring.jpa.properties.hibernate.order_updates", "true");
+		// Removed JVM optimizations for trading workloads related to JPA
         
         SpringApplication app = new SpringApplication(BackendvaultApplication.class);
         

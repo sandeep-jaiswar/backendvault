@@ -6,7 +6,7 @@ spring:
     name: backendvault
 
   datasource:
-    url: jdbc:clickhouse://localhost:8123/trading_db?autoCommit=true&compress=true&tcpKeepAlive=true
+    url: jdbc:clickhouse://localhost:8123/trading_db?autoCommit=true&compress=true&tcpKeepAlive=true&tcpNoDelay=true&maxExecutionTime=60&maxThreads=4&maxInsertBlockSize=1048576&minInsertBlockSizeRows=500&socketTimeout=300000
     username: ${DB_USERNAME:default}
     password: ${DB_PASSWORD:password}
     driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
@@ -19,23 +19,11 @@ spring:
       connection-timeout: 250
       validation-timeout: 250
       leak-detection-threshold: 30000
-      data-source-properties:
-        socket_timeout: 300000
-        max_execution_time: 60
-
-  jpa:
-    hibernate:
-      ddl-auto: none   # ❌ don't let Hibernate auto-DDL, let Liquibase handle schema
-    properties:
-      hibernate.dialect: org.hibernate.dialect.ClickHouseDialect
-      hibernate.show_sql: false
-      hibernate.format_sql: false
+      # Removed data-source-properties as they are now in the JDBC URL
 
   liquibase:
-    enabled: true
-    change-log: classpath:db/liquibase/master.xml
-    contexts: dev
-    default-schema: trading
+    enabled: false # Disable Liquibase for ClickHouse compatibility
+    # Removed change-log, contexts, default-schema as Liquibase is disabled
 
 # Management & Monitoring
 management:
@@ -49,6 +37,6 @@ management:
 
 logging:
   level:
-    liquibase: INFO
+    liquibase: WARN # Set to WARN to suppress unnecessary Liquibase messages
     com.clickhouse: INFO
     com.zaxxer.hikari: INFO

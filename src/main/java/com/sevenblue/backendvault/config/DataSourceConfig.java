@@ -15,9 +15,8 @@ import com.zaxxer.hikari.HikariDataSource;
  * 
  * Key optimizations:
  * - Sub-millisecond connection acquisition
- * - ClickHouse-specific driver properties
  * - Leak detection for production monitoring
- * - TCP keep-alive for persistent connections
+ * - All ClickHouse-specific driver properties are now configured directly in the JDBC URL in application.yml
  */
 
 @Configuration
@@ -61,21 +60,8 @@ public class DataSourceConfig {
         // Leak Detection (important for production)
         config.setLeakDetectionThreshold(30_000); // 30 seconds
         
-        // === CLICKHOUSE-SPECIFIC OPTIMIZATIONS ===
-        
-        // Socket-level optimizations
-        config.addDataSourceProperty("socket_timeout", "300000");
-        config.addDataSourceProperty("tcp_keep_alive", "true");
-        config.addDataSourceProperty("tcp_no_delay", "true");
-        
-        // ClickHouse query optimizations
-        config.addDataSourceProperty("max_execution_time", "60");
-        config.addDataSourceProperty("max_threads", "4");
-        config.addDataSourceProperty("compression", "true");
-        
-        // Buffer size optimizations for bulk operations
-        config.addDataSourceProperty("max_insert_block_size", "1048576");
-        config.addDataSourceProperty("min_insert_block_size_rows", "500");
+        // All ClickHouse-specific optimizations are now configured directly in the JDBC URL.
+        // The following addDataSourceProperty calls are removed to avoid redundancy and warnings.
         
         // Connection pool naming for monitoring
         config.setPoolName("TradingHikariPool");
